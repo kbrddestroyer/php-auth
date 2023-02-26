@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+    <head>
+        <title>Регистрация</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="js/ajax.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Регистрация</h1>
+        </div>
+        <div class="login_form">
+        <table>
+                <tr>
+                    <td>
+                        <form name = "registration">
+                            <table cellspacing="2">
+                                <tr>
+                                    <td align="center">
+                                        <fieldset name="auth_fieldset">
+                                            <legend>Данные для авторизации</legend>
+                                            <table>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Имя пользователя:</font>
+                                                    </td>
+                                                    <td>
+                                                        <input id="login" name="login" maxlength="25" size="50" required>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Пароль:</font>
+                                                    </td>
+                                                    <td>
+                                                        <input type="password" name="password" id="password" minlength="8" maxlength="25" size="50" required>
+                                                    </td>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Подтвердите пароль:</font>
+                                                    </td>
+                                                    <td>
+                                                        <input type="password" name="confirm_password" id="confirm_password" minlength="8" maxlength="25" size="50" required>
+                                                    </td>
+                                                </tr>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <fieldset name="additional_data">
+                                            <legend>Дополнительная информация</legend>
+                                            <table>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Адрес электронной почты</font>
+                                                    </td>
+                                                    <td>
+                                                        <input type="email" name="email" id="email" size="50" required>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>ФИО</font>
+                                                    </td>
+                                                    <td>
+                                                        <input id="name" name="name" minlength="2" pattern="^[А-Яa-zа-яA-ZЁё\s]+$" required>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><br/> 
+                                    <input type="submit" id="submit_registration" value="Submit"/></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            Уже зарегестрированы? <a href="index.html">Войти в аккаунт</a>
+        </div>
+    </body>
+</html>

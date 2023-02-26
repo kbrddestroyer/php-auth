@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+    <head>
+        <title>Войти</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body>
+    <script src="js/ajax.js"></script>
+        <div class="header">
+            <h1>Авторизация</h1>
+        </div>
+        <div class="login_form">
+        <table>
+                <tr>
+                    <td>
+                        <form id="login_form">
+                            <table cellspacing="2">
+                                <tr>
+                                    <td align="center">
+                                        <fieldset>
+                                            <legend>Войти в аккаунт</legend>
+                                            <table>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Имя пользователя:</font>
+                                                    </td>
+                                                    <td>
+                                                        <input id="login" name="login" pattern="[A-Za-z0-9]{6,}" size="50" required>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="right">
+                                                        <font>Пароль:</font>
+                                                    </td>
+                                                    <td>
+                                                        <input type="password" name="password" id="password" maxlength="25" size="50" required>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><br/> 
+                                    <input type="submit" id="submit_login" value="Submit"/></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            Нет аккаунта? <a href="registration.html">Зарегестрируйтесь!</a>
+        </div>
+        <div class="footer">
+            <h2>Информация</h2>
+            <div class="footer_block">
+                <p> Block </p>
+                <p> Block </p>
+                <p> Block </p>
+            </div>
+        </div>
+    </body>
+</html>
