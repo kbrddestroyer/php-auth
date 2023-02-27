@@ -5,8 +5,14 @@ html, body {
     padding: 0;
     border: 0;
 }
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
 div {
-    width: 100vw;
+    width: 100%;
     margin: 0;
     padding: 0;
     border: 0;
@@ -40,20 +46,18 @@ legend {
 }
 .footer {
     position: fixed;
+    display: inline;
     bottom: 0;
     text-align: center;
     background-color: lightgrey;
     vertical-align: bottom;
     padding: 5px;
-}
-.footer_block {
-    display: inline-block;
+    padding-top: 30px;
 }
 .login_form {
     height: 500px;
     width: 600px;
     text-align: center;
-
     margin: auto;
     margin-top: 2%;
 }
@@ -63,4 +67,8 @@ legend {
     padding: 0px; 
     font: 24px/30px Georgia; 
     color: #768e4e; 
+}
+.mainpage {
+    padding: 15px;
+    font-family: 'Times New Roman', Times, serif;
 }
