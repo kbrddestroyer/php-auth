@@ -74,6 +74,7 @@ function register(e)
     var name = additional_data.elements.name;
     login.setCustomValidity("");
     confirm_password.setCustomValidity("");
+    email.setCustomValidity("");
     if (!registration_form.reportValidity()) return;
 
     data = {
@@ -94,15 +95,20 @@ function register(e)
             // Validate here
             switch (data['error'])
             {
-                case 1:
+                case 9:
                 {
                     confirm_password.setCustomValidity("Пароли не совпадают!");
                     confirm_password.reportValidity();
                 } break;
-                case 2:
+                case 10:
                 {
                     login.setCustomValidity("Аккаунт уже существует!");
                     login.reportValidity();
+                } break;
+                case 11:
+                {
+                    email.setCustomValidity("Аккаунт уже существует!");
+                    email.reportValidity();
                 } break;
             }
         }
@@ -110,11 +116,47 @@ function register(e)
     });
 }
 
+function logout(e)
+{
+    e.preventDefault();
+    data = {
+        'type': 'logout'
+    };
+    setAjaxPostRequest(data).then((data) => {
+        if (data['success'])
+        {
+            console.log("Hello");
+            location.href = 'index.html';
+        }    
+    });
+}
+
+function checkLogin()
+{
+    data = {
+        'type': 'check_auth'
+    }
+    setAjaxPostRequest(data).then((data) => 
+    {
+        if (!data['success'])
+            location.href = 'index.html';
+        var greetings = document.getElementById("greetings");
+        greetings.innerHTML = data['name'];
+    });
+    
+}
+
 window.onload = function() {
     var _login = document.getElementById("submit_login");
     var _register = document.getElementById("submit_registration");
+    var _exit = document.getElementById("submit_exit");
     if (_login)
         _login.addEventListener("click", login, true);
     if (_register)
         _register.addEventListener("click", register, true);
+    if (_exit)
+    {
+        _exit.addEventListener("click", logout, true);
+        checkLogin();
+    }
 }

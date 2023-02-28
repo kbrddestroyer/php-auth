@@ -6,29 +6,100 @@
     {
         // Just an entry point
         // and some top-layer functions
-        public static function main()
+        public static function main__()
         {
             $_controller = new AjaxController();
             $data = $_controller->GetJSONRequest();
             if (!$data)
             {
-                echo json_encode(['success'=>false, 'error'=>6, 'message'=>'Not a JSON request']);
+                echo json_encode(['success'=>false, 'error'=>-1, 'message'=>'Not a JSON request']);
                 exit;
             }
 
+            $validation = Main::validate($data);
+            if ($validation != 0)
+            {
+                echo json_encode(['success'=>false, 'error'=>$validation]);
+                exit;
+            }
             if ($data['type'] == 'login')
                 Main::login($data);
             else if ($data['type'] == 'register')
                 Main::registration($data);
             else if ($data['type'] == 'check_auth')
                 Main::CheckAuth($data);
+            else if ($data['type'] == 'logout')
+                Main::logout();
             else echo json_encode(['success'=>false, 'error'=>0]);
+        }
+
+        private static function validate($data) : int 
+        {
+            // Server-side validation.
+            // Client-side has it's own validation mechanism based on both JS and HTML5
+
+            // ERROR CODES:
+            // GENERAL:
+            // 0 - OK
+            // 1 - Bad request (no type)
+            // 2 - Corrupted login or register request (no required data passed)
+            // 3 - login and/or password length validation failed
+            // 4 - password symbol validation failed
+            // 5 - spaces in login and/or password found
+            // REGISTRATION:
+            // 6 - password confirmation failed
+            // 7 - email validation failed
+            // 8 - name validation failed
+            // LOGIN:
+            // 9 - Wrong password
+            // 10 - Account not found
+
+            if (!isset($data['type']))
+                return 1;                                                       // Corrupted request
+            // Login & Password are always being passed
+            if ($data['type'] == 'check_auth' or $data['type'] == 'logout')     // No need to pass anything
+                return 0;
+
+            if (!isset($data['login']) or !isset($data['password']))
+            return 2;                                                           // Corrupted form pass
+            if (
+                strlen($data['login']) < 6 
+                or
+                strlen($data['password'])  < 6
+                )
+                return 3;
+            if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $data['password']))
+                return 4;
+            if (strpos($data['login'], ' ') or strpos($data['password'], ' '))
+                return 5;
+            if ($data['type'] == 'register')
+            {
+                if (!isset($data['email']) or !isset($data['name']))
+                    return 2;
+                if ($data['password'] != $data['confirm_password'])
+                    return 6;
+                if (
+                    strlen($data['email']) == 0 or
+                    substr_count($data['email'], '@') != 1 or 
+                    substr_count($data['email'], '.', strpos($data['email'], '@')) != 1 or 
+                    strpos($data['email'], '.') == strlen($data['email']) - 1 or 
+                    strpos($data['email'], ' ')
+                )
+                    return 7;
+                if (
+                    strlen($data['name']) < 0 or
+                    strpos($data['name'], ' ') === 0 or
+                    strpos($data['name'], ' ') === strlen($data['name']) - 1
+                )
+                    return 8;
+            }
+            return 0;
         }
 
         private static function login($data)
         {
             $response = new JSONRespond();
-            
+
             $dao = new UserDao();
             $user = new User($data['login'], $data['password']);
             $hash = new HashController();
@@ -37,7 +108,7 @@
             {
                 if (!$hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()))
                 {
-                    $response->setError(4);
+                    $response->setError(12);
                     echo $response->toJSON();
                 }
                 else
@@ -51,7 +122,7 @@
             }
             else
             {
-                $response->setError(3);
+                $response->setError(13);
                 echo $response->toJSON();
             }
         }
@@ -61,25 +132,34 @@
             $response = new JSONRespond();
             if ($data['password'] != $data['confirm_password'])
             {  
-                $response->setError(1);
+                $response->setError(9);
                 echo $response->toJSON();
                 exit;
             }
 
-            $dao = new UserDao();
-            if ($dao->load($data['login']))
-            {
-                $response->setError(2);
-                echo $response->toJSON();
-                return;
-            }
-
-            $dao = new AccountDao(new Account(
+            $dao = new AccountDao();
+            $account = new Account(
                 $data['login'],
                 $data['password'],
                 $data['name'],
                 $data['email']
-            ));
+            );
+            if ($dao->load($account->getLogin()))
+            {
+                $response->setError(10);
+                echo $response->toJSON();
+                return;
+            }
+            
+            $accounts = $dao->selectAll();
+            foreach ($accounts as $acc)
+                if ($account->getEmail() == $acc->getEmail())
+                {
+                    $response->setError(11);
+                    echo $response->toJSON();
+                    return;
+                }
+            $dao->setAccount($account);
 
             if ($dao->save())
             {   
@@ -95,11 +175,19 @@
             $response = new JSONRespond();
             if (!isset($_SESSION['login']) or !$dao->load($_SESSION['login']))
             {
-                $response->setError(1);
+                $response->setError(14);
                 echo $response->toJSON();   
                 return;
             }
             echo json_encode(['success' => true, 'name' => $dao->getAccount()->getName()]);
+        }
+
+        public static function logout()
+        {
+            unset($_SESSION['login']);
+            session_destroy();
+            echo json_encode(['success' => true]);
+            exit;            
         }
     }
 

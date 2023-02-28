@@ -24,7 +24,7 @@
                                                     <font>Имя пользователя:</font>
                                                 </td>
                                                 <td>
-                                                    <input id="login" name="login" pattern="[A-Za-z0-9]{6,}" size="50" required>
+                                                    <input id="login" name="login" minlength="6" size="50" required>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -32,7 +32,7 @@
                                                     <font>Пароль:</font>
                                                 </td>
                                                 <td>
-                                                    <input type="password" name="password" id="password" maxlength="25" size="50" required>
+                                                    <input type="password" name="password" id="password" minlength="6" maxlength="25" size="50" required>
                                                 </td>
                                             </tr>
                                         </table>
@@ -41,7 +41,7 @@
                             </tr>
                             <tr>
                                 <td align="right"><br/> 
-                                <input type="submit" id="submit_login" value="Submit"/></td>
+                                <input type="submit" id="submit_login" value="Войти"/></td>
                             </tr>
                         </table>
                     </form>

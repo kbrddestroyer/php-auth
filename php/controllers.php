@@ -21,7 +21,7 @@
 
         public function __construct()
         {
-            $config = new ConfigController("serverconfig.ini");
+            $config = new ConfigController("../serverconfig.ini");
             $this->salt = $config->getConfig("static_salt");
         }
 

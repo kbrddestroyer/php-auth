@@ -69,6 +69,16 @@ legend {
     color: #768e4e; 
 }
 .mainpage {
+    display: inline-table;
+    width: 100%;
+    height: auto;
     padding: 15px;
     font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    vertical-align: center;
+    align-content: center;
+}
+.mainpage>div {
+    display: table-cell;
+    width: auto;
 }

@@ -8,6 +8,7 @@
 
     interface Dao 
     {
+        public function selectAll();
         public function load(string $key);
         public function update();
         public function delete();
@@ -28,13 +29,23 @@
             if ($user and $user instanceof User)
                 $this->user = $user;
             
-            $config = new ConfigController('serverconfig.ini');
+            $config = new ConfigController('../serverconfig.ini');
             $this->controller = new JSONController($config->getConfig("database"));
         }
 
         public function getUser() { return $this->user; }
         public function setUser(User $user) { $this->user = $user; }
         // <---     CRUD    ---> //
+
+        public function selectAll()
+        {
+            $users = array();
+            $_data = $this->controller->json_load();
+            $counter = 0;
+            foreach ($_data as $key => $value)
+                $users[$counter++] = new User($key, $value['password']);
+            return $users;
+        }
 
         public function load(string $key)
         {
@@ -83,7 +94,7 @@
         {
             if ($account and $account instanceof Account)
                 $this->account = $account;
-            $config = new ConfigController('serverconfig.ini');
+            $config = new ConfigController('../serverconfig.ini');
             $this->controller = new JSONController($config->getConfig("database"));
         }
 
@@ -91,6 +102,21 @@
         public function setAccount(Account $account) { $this->account = $account; }
 
         // <---     CRUD    ---> //
+
+        public function selectAll()
+        {
+            $accounts = array();
+            $_data = $this->controller->json_load();
+            $counter = 0;
+            foreach ($_data as $key => $value)
+                $accounts[$counter++] = new Account(
+                    $key, 
+                    $value['password'], 
+                    $value['name'], 
+                    $value['email']
+                );
+            return $accounts;
+        }
 
         public function load(string $key)
         {

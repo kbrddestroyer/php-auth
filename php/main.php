@@ -21,5 +21,5 @@
 
     require_once("main_classes.php");
 
-    Main::main();
+    Main::main__();
 ?>
