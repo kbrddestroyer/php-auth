@@ -12,7 +12,7 @@
             $data = $_controller->GetJSONRequest();
             if (!$data)
             {
-                echo json_encode(['success'=>false, 'error'=>-1, 'message'=>'Not a JSON request']);
+                echo json_encode(['success'=>false, 'error'=>-1]);
                 exit;
             }
 
@@ -30,7 +30,7 @@
                 Main::CheckAuth($data);
             else if ($data['type'] == 'logout')
                 Main::logout();
-            else echo json_encode(['success'=>false, 'error'=>0]);
+            else echo json_encode(['success'=>false, 'error'=>1]);
         }
 
         private static function validate($data) : int 
@@ -40,19 +40,25 @@
 
             // ERROR CODES:
             // GENERAL:
+            // -1 - Bad request (not an AJAX request)
             // 0 - OK
-            // 1 - Bad request (no type)
+            // 1 - Bad request (no or corrupted request type)
             // 2 - Corrupted login or register request (no required data passed)
+            // REGISTRATION:
             // 3 - login and/or password length validation failed
             // 4 - password symbol validation failed
-            // 5 - spaces in login and/or password found
-            // REGISTRATION:
-            // 6 - password confirmation failed
-            // 7 - email validation failed
-            // 8 - name validation failed
+            // 5 - spaces in login found
+            // 6 - spaces in password found
+            // 7 - password confirmation failed
+            // 8 - email validation failed
+            // 9 - name validation failed
+            // 10 - password confirmation failed
+            // 11 - account aleready exists
+            // 12 - email already registered
             // LOGIN:
-            // 9 - Wrong password
-            // 10 - Account not found
+            // 13 - Wrong password
+            // 14 - Account not found
+            
 
             if (!isset($data['type']))
                 return 1;                                                       // Corrupted request
@@ -62,36 +68,38 @@
 
             if (!isset($data['login']) or !isset($data['password']))
             return 2;                                                           // Corrupted form pass
-            if (
-                strlen($data['login']) < 6 
-                or
-                strlen($data['password'])  < 6
-                )
-                return 3;
-            if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $data['password']))
-                return 4;
-            if (strpos($data['login'], ' ') or strpos($data['password'], ' '))
-                return 5;
             if ($data['type'] == 'register')
             {
+                if (
+                    strlen($data['login']) < 6 
+                    or
+                    strlen($data['password'])  < 6
+                    )
+                    return 3;
+                if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $data['password']))
+                    return 4;
+                if (strpos($data['login'], ' ') !== false)
+                    return 5;
+                if (strpos($data['password'], ' ') !== false)
+                    return 6;
                 if (!isset($data['email']) or !isset($data['name']))
                     return 2;
                 if ($data['password'] != $data['confirm_password'])
-                    return 6;
+                    return 7;
                 if (
                     strlen($data['email']) == 0 or
                     substr_count($data['email'], '@') != 1 or 
                     substr_count($data['email'], '.', strpos($data['email'], '@')) != 1 or 
-                    strpos($data['email'], '.') == strlen($data['email']) - 1 or 
-                    strpos($data['email'], ' ')
+                    strpos($data['email'], '.') === strlen($data['email']) - 1 or 
+                    strpos($data['email'], ' ') === 0
                 )
-                    return 7;
+                    return 8;
                 if (
                     strlen($data['name']) < 0 or
                     strpos($data['name'], ' ') === 0 or
                     strpos($data['name'], ' ') === strlen($data['name']) - 1
                 )
-                    return 8;
+                    return 9;
             }
             return 0;
         }
@@ -108,7 +116,7 @@
             {
                 if (!$hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()))
                 {
-                    $response->setError(12);
+                    $response->setError(13);
                     echo $response->toJSON();
                 }
                 else
@@ -122,7 +130,7 @@
             }
             else
             {
-                $response->setError(13);
+                $response->setError(14);
                 echo $response->toJSON();
             }
         }
@@ -132,7 +140,7 @@
             $response = new JSONRespond();
             if ($data['password'] != $data['confirm_password'])
             {  
-                $response->setError(9);
+                $response->setError(10);
                 echo $response->toJSON();
                 exit;
             }
@@ -146,7 +154,7 @@
             );
             if ($dao->load($account->getLogin()))
             {
-                $response->setError(10);
+                $response->setError(11);
                 echo $response->toJSON();
                 return;
             }
@@ -155,7 +163,7 @@
             foreach ($accounts as $acc)
                 if ($account->getEmail() == $acc->getEmail())
                 {
-                    $response->setError(11);
+                    $response->setError(12);
                     echo $response->toJSON();
                     return;
                 }

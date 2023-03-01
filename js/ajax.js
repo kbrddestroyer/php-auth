@@ -72,6 +72,7 @@ function register(e)
     var additional_data = registration_form.elements.additional_data;
     var email = additional_data.elements.email;
     var name = additional_data.elements.name;
+    password.setCustomValidity("");
     login.setCustomValidity("");
     confirm_password.setCustomValidity("");
     email.setCustomValidity("");
@@ -95,10 +96,31 @@ function register(e)
             // Validate here
             switch (data['error'])
             {
-                case 9:
+                case 4:
+                {
+                    password.setCustomValidity("Пароль должен содержать буквы и цифры");
+                    password.reportValidity();
+                } break;
+                case 5:
+                {
+                    login.setCustomValidity("Логин не должен содержать пробелы");
+                    console.log('err');
+                    login.reportValidity();
+                } break;
+                case 6:
+                {
+                    password.setCustomValidity("Пароль не должен содержать пробелы");
+                    password.reportValidity();
+                } break;
+                case 7:
                 {
                     confirm_password.setCustomValidity("Пароли не совпадают!");
                     confirm_password.reportValidity();
+                } break;
+                case 8:
+                {
+                    email.setCustomValidity("Доменная часть не задана или задана неверно");
+                    email.reportValidity();
                 } break;
                 case 10:
                 {
