@@ -76,7 +76,7 @@
                     strlen($data['password'])  < 6
                     )
                     return 3;
-                if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $data['password']))
+                if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $data['password']) or preg_match('/[^a-zAA-Z\d]/', $data['password']))
                     return 4;
                 if (strpos($data['login'], ' ') !== false)
                     return 5;
@@ -91,7 +91,7 @@
                     substr_count($data['email'], '@') != 1 or 
                     substr_count($data['email'], '.', strpos($data['email'], '@')) != 1 or 
                     strpos($data['email'], '.') === strlen($data['email']) - 1 or 
-                    strpos($data['email'], ' ') === 0
+                    strpos($data['email'], ' ')
                 )
                     return 8;
                 if (
@@ -114,16 +114,19 @@
 
             if ($dao->load($data['login']))
             {
-                if (!$hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()))
-                {
-                    $response->setError(13);
-                    echo $response->toJSON();
-                }
-                else
+                if ($hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()) or
+                (isset($_COOKIE['login']) and $_COOKIE['login'] == $user->getLogin()))
                 {
                     $response->setSuccess(true);
                     echo $response->toJSON();
                     $_SESSION['login'] = $user->getLogin();
+                    setcookie('login', $user->getLogin(), time() + 60 * 60 * 24); // Expires in 24 hours
+                }
+                else
+                {
+                    $response->setError(13);
+                    echo $response->toJSON();
+                
                     exit;
                 }
                 exit;
@@ -172,6 +175,9 @@
             if ($dao->save())
             {   
                 $response->setSuccess(true);
+                $_SESSION['login'] = $dao->getAccount()->getLogin();
+                setcookie('login', $dao->getAccount()->getLogin(), time() + 60 * 60 * 24); // Expires in 24 hours
+                
                 echo $response->toJSON();
                 exit;
             }

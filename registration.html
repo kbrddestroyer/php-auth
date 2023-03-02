@@ -24,7 +24,7 @@
                                                         <font>Имя пользователя:</font>
                                                     </td>
                                                     <td>
-                                                        <input id="login" name="login" maxlength="25" size="50" required>
+                                                        <input id="login" name="login" minlength="6" maxlength="25" pattern="[^\s]{6, 25}" size="50" required>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -57,15 +57,15 @@
                                                         <font>Адрес электронной почты</font>
                                                     </td>
                                                     <td>
-                                                        <input type="email" name="email" id="email" size="50" required>
+                                                        <input type="email" name="email" id="email" pattern="[^\s]+" size="50" required>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="right">
-                                                        <font>ФИО</font>
+                                                        <font>Имя</font>
                                                     </td>
                                                     <td>
-                                                        <input id="name" name="name" minlength="2" pattern="^[А-Яa-zа-яA-ZЁё\s]+$" required>
+                                                        <input id="name" name="name" minlength="2" maxlength="25" pattern="^[А-Яa-zа-яA-ZЁё\s]+$" required>
                                                     </td>
                                                 </tr>
                                             </table>

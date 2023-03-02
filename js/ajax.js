@@ -6,7 +6,8 @@ async function setAjaxPostRequest(data)
         headers: {
             "Content-Type": "application/json; charset=UTF-8"
           }
-    });    
+    });
+
     return response.json();
 }
 
@@ -76,6 +77,7 @@ function register(e)
     login.setCustomValidity("");
     confirm_password.setCustomValidity("");
     email.setCustomValidity("");
+    name.setCustomValidity("");
     if (!registration_form.reportValidity()) return;
 
     data = {
@@ -87,6 +89,7 @@ function register(e)
         'name': name.value
     }
     setAjaxPostRequest(data).then((data) => {
+        console.log(data);
         if (data['success'])
         {
             location.href = "main.html";
@@ -98,7 +101,7 @@ function register(e)
             {
                 case 4:
                 {
-                    password.setCustomValidity("Пароль должен содержать буквы и цифры");
+                    password.setCustomValidity("Пароль должен содержать только буквы и цифры");
                     password.reportValidity();
                 } break;
                 case 5:
@@ -122,12 +125,17 @@ function register(e)
                     email.setCustomValidity("Доменная часть не задана или задана неверно");
                     email.reportValidity();
                 } break;
-                case 10:
+                case 9:
+                {
+                    name.setCustomValidity("ФИО введено некорректно");
+                    name.reportValidity();
+                } break;
+                case 11:
                 {
                     login.setCustomValidity("Аккаунт уже существует!");
                     login.reportValidity();
                 } break;
-                case 11:
+                case 12:
                 {
                     email.setCustomValidity("Аккаунт уже существует!");
                     email.reportValidity();
@@ -160,6 +168,7 @@ function checkLogin()
     }
     setAjaxPostRequest(data).then((data) => 
     {
+        console.log(data);
         if (!data['success'])
             location.href = 'index.html';
         var greetings = document.getElementById("greetings");
