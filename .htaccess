@@ -1,1 +1,4 @@
 AddType application/x-httpd-php .html .htm 
+<FilesMatch "\.(json)$">
+    deny from all
+</FilesMatch>
