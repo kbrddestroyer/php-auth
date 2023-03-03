@@ -2,7 +2,7 @@
     /*
     *       DAO library
     *   Contains DAO classes for User and Account
-    *   Last Modified: 24.02.2023 14:00
+    *   Last Modified: 03.03.2023 14:30
     */
     require_once("controllers.php");
 
@@ -19,7 +19,6 @@
     {
         // User Data Access Object
         // Used in data I/O
-        // Single Responsibility - User CRUD operations
 
         private User $user;
         private JSONController $controller;
@@ -77,7 +76,7 @@
 
         public function save()
         {
-            return false;   // Cannot save User object
+            return false;   // Cannot save User object. Use AccoundDao instead
         }
     }
 
@@ -85,7 +84,6 @@
     {
         // Account Data Access Object
         // Used in data I/O
-        // Single Responsibility - Account CRUD operations
         
         private Account $account;
         private JSONController $controller;
@@ -163,9 +161,10 @@
             $hash = new HashController();
 
             $_data = $this->controller->json_load();
+            $this->account->setPassword($hash->saltPassword($this->account->getPassword()));
             $_data[$this->account->getLogin()] = 
             [
-                'password' => $hash->saltPassword($this->account->getPassword()),
+                'password' => $this->account->getPassword(),
                 'name' => $this->account->getName(),
                 'email' => $this->account->getEmail()
             ];

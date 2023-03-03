@@ -59,7 +59,6 @@
     {
         // Wrapper for JSON files
         // I/O controller
-        // Single-Responsibility - Simple I/O JSON Interface
 
         private string $fname;
 

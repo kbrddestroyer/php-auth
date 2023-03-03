@@ -62,12 +62,11 @@
 
             if (!isset($data['type']))
                 return 1;                                                       // Corrupted request
-            // Login & Password are always being passed
-            if ($data['type'] == 'check_auth' or $data['type'] == 'logout')     // No need to pass anything
+            if ($data['type'] == 'check_auth' or $data['type'] == 'logout')     // No need to check anything else
                 return 0;
 
             if (!isset($data['login']) or !isset($data['password']))
-            return 2;                                                           // Corrupted form pass
+            return 2;                                                           // Corrupted form
             if ($data['type'] == 'register')
             {
                 if (
@@ -114,13 +113,17 @@
 
             if ($dao->load($data['login']))
             {
-                if ($hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()) or
-                (isset($_COOKIE['login']) and $_COOKIE['login'] == $user->getLogin()))
+                if (
+                    $hash->checkPassword($user->getPassword(), $dao->getUser()->getPassword()) or
+                    (isset($_COOKIE['login']) and $_COOKIE['login'] == $user->getLogin() and 
+                    $_COOKIE['key'] == $dao->getUser()->getPassword())
+                )
                 {
                     $response->setSuccess(true);
-                    echo $response->toJSON();
                     $_SESSION['login'] = $user->getLogin();
-                    setcookie('login', $user->getLogin(), time() + 60 * 60 * 24); // Expires in 24 hours
+                    setcookie('login', $user->getLogin(), time() + 60 * 60 * 24);
+                    setcookie('key', $dao->getUser()->getPassword(), time() + 60 * 60 * 24);
+                    echo $response->toJSON();
                 }
                 else
                 {
@@ -176,8 +179,8 @@
             {   
                 $response->setSuccess(true);
                 $_SESSION['login'] = $dao->getAccount()->getLogin();
-                setcookie('login', $dao->getAccount()->getLogin(), time() + 60 * 60 * 24); // Expires in 24 hours
-                
+                setcookie('login', $dao->getAccount()->getLogin(), time() + 60 * 60 * 24);
+                setcookie('key', $dao->getAccount()->getPassword(), time() + 60 * 60 * 24);
                 echo $response->toJSON();
                 exit;
             }
@@ -200,6 +203,8 @@
         {
             unset($_SESSION['login']);
             session_destroy();
+            setcookie('login', "", time());
+            setcookie('key', "", time());
             echo json_encode(['success' => true]);
             exit;            
         }

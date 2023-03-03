@@ -7,7 +7,7 @@
     class User
     {
         /*
-        *       User class connects web-form with database control unit and/or JSON
+        *       User class connects web-form with database/JSON controller
         */
         protected $login = "";
         protected $password = "";
@@ -20,6 +20,8 @@
 
         public function getLogin() { return $this->login; }
         public function getPassword() { return $this->password; }
+        public function setLogin(string $login) { $this->login = $login; }
+        public function setPassword(string $password) { $this->password = $password; }
     }
 
     class Account extends User {

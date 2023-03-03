@@ -17,8 +17,6 @@ function login(e)
     // The function defined LOGIN button controller
     // and sends POST request onto PHP script
 
-    //var login = document.getElementById("login");
-    //var password = document.getElementById("password");
     var login_form = document.forms.login_form;
     if (!login_form) throw (new Error("No required form found"));
     var login = login_form.elements.login;
@@ -35,19 +33,17 @@ function login(e)
     setAjaxPostRequest(data).then((data) => 
     {
         if (data['success'])
-            location.href = "main.html";        // Redirect   
+            location.href = "main.html"; 
         else
         {
             switch (data['error'])
             {
-                // Other tech. errors here:
                 default: {
                     password.setCustomValidity("Неверный логин или пароль!");    
                     password.reportValidity();
                 } break;
             }
         }
-        //login_form.reportValidity();
     });
 }
 
@@ -57,12 +53,6 @@ function register(e)
     // This function defines REGISTRATION button controller
     // and sends POST request onto PHP script
 
-    //var login = document.getElementById("login");
-    //var password = document.getElementById("password");
-    //var confirm_password = document.getElementById("confirm_password");
-    //var email = document.getElementById("email");
-    //var name = document.getElementById("name");
-    
     var registration_form = document.forms.registration;
     // Auth data
     var auth_fieldset = registration_form.elements.auth_fieldset;
@@ -89,7 +79,6 @@ function register(e)
         'name': name.value
     }
     setAjaxPostRequest(data).then((data) => {
-        console.log(data);
         if (data['success'])
         {
             location.href = "main.html";
@@ -107,7 +96,6 @@ function register(e)
                 case 5:
                 {
                     login.setCustomValidity("Логин не должен содержать пробелы");
-                    console.log('err');
                     login.reportValidity();
                 } break;
                 case 6:
@@ -155,7 +143,6 @@ function logout(e)
     setAjaxPostRequest(data).then((data) => {
         if (data['success'])
         {
-            console.log("Hello");
             location.href = 'index.html';
         }    
     });
@@ -168,7 +155,6 @@ function checkLogin()
     }
     setAjaxPostRequest(data).then((data) => 
     {
-        console.log(data);
         if (!data['success'])
             location.href = 'index.html';
         var greetings = document.getElementById("greetings");
