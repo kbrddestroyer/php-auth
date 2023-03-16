@@ -95,8 +95,7 @@
                     return 8;
                 if (
                     strlen($data['name']) < 0 or
-                    strpos($data['name'], ' ') === 0 or
-                    strpos($data['name'], ' ') === strlen($data['name']) - 1
+                    strpos($data['name'], ' ') !== false
                 )
                     return 9;
             }
@@ -192,9 +191,13 @@
             $response = new JSONRespond();
             if (!isset($_SESSION['login']) or !$dao->load($_SESSION['login']))
             {
-                $response->setError(14);
-                echo $response->toJSON();   
-                return;
+                if (
+                    !(isset($_COOKIE['login']) and $_COOKIE['login'] == $dao->getAccount()->getLogin() and 
+                    $_COOKIE['key'] == $dao->getAccount()->getPassword())
+                )
+                    $response->setError(14);
+                    echo $response->toJSON();   
+                    return;
             }
             echo json_encode(['success' => true, 'name' => $dao->getAccount()->getName()]);
         }
